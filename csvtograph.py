@@ -1,4 +1,5 @@
 import pandas as pd
+from housecsvparse import HouseCSVParser
 
 class Node():
     def __init__(key, num, name, party, state, region):
@@ -49,26 +50,7 @@ class Graph():
     def print_node_info(self):
         pass
     
-class HouseCSVParser():
-    
-    def extract_name(self, col):
-        name_chars = []
-        for c in col:
-            if c == ' ':
-                break
-            name_chars.append(c)
-        return ''.join(name_chars)
-    
-    def extract_party(self, col):
-        for i, c in enumerate(col):
-            if c == '(':
-                return col[i+1]
 
-
-    def extract_state(self, col):
-        for i, c in enumerate(col):
-            if c == '(':
-                return col[i+3] + col[i+4]
 
 
 df = pd.read_csv('housedataset.csv')
