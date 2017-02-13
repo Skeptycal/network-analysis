@@ -2,20 +2,16 @@ import pandas as pd
 from housecsvparse import HouseCSVParser
 
 class Node():
-    def __init__(key, num, name, party, state, region):
+    def __init__(self, key, name, party, state, yes_votes, no_votes):
         self.key = key
         self.name = name
         self.party = party
         self.state = state
-        self.region = region
-        self.yvotes = set()
-        self.nvotes = set()
+        # self.region = region may investigate later
+        self.yes_votes = yes_votes
+        self.no_votes = no_votes
     
-    def add_vote(self, num, decision):
-        if decision == 1:
-            self.yvotes.add(num)
-        elif decision == 0:
-            self.nvotes.add(num)
+    
     
     def calcluate_tie_strength(self, node):
         # count positive strength (same votes)
@@ -26,21 +22,40 @@ class Node():
         return 0
 
 class Edge():
-    def __init__(self):
-        self.weight = 0
+    def __init__(self, weight):
+        self.weight = weight
 
 class Graph():
-    def __init__(self, node_list):
+    def __init__(self, df):
         # place nodes in dictionary data structure
-        self.node_dict = generate_dictionary(node_list) 
-        self.construct_graph()
+        self.node_dict = self.generate_dictionary(df) 
+        #self.construct_graph()
     
     def generate_dictionary(self, node_list):
-        pass
+        # Create parser object
+        h = HouseCSVParser()
+        # For each row, create node object and insert into dict
+        node_dict = {}
+        for row in df.itertuples():
+            # Create node 
+            name = h.extract_name(row[1])
+            party = h.extract_party(row[1])
+            state = h.extract_state(row[1])
+            yes_votes = h.get_votes(row, 1)
+            no_votes = h.get_votes(row, 0)
+            node = Node(row[0], name, party, state, yes_votes, no_votes)
+            # Insert node into dict
+            node_dict[node.key] = node
 
-    def construct_graph(self, node_list):
-        pass
+        return node_dict
 
+    def construct_graph(self):
+        # initialize empty adjacency matrix
+        self.matrix = [[0 for x in range(len(dict))] for y in range(len(dict))]
+        for a in self.node_dict:
+            for b in self.node_dict:
+                self.matrix[a.key][b.key] = Edge(a.calculate_tie_strength(b))
+        
     def print_nodes(self):
         pass
     
@@ -51,28 +66,10 @@ class Graph():
         pass
     
 
-
-
+# CSV to dataframe
 df = pd.read_csv('housedataset.csv')
 
-count = 0
-h = HouseCSVParser()
-
-for row in df.itertuples():
-    print(row)
-    count+=1
-    col = row[1]
-    name = h.extract_name(col)
-    print(name)
-    party = h.extract_party(col)
-    print(party)
-    state = h.extract_state(col)
-    print(state)
-    if count > 5:
-        break
-    
-
-
-
+# Initialize Graph
+g = Graph(df)
 
 
