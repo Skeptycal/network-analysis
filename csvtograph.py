@@ -1,8 +1,8 @@
 import pandas as pd
 
 class Node():
-    def __init__(self, num, name, party, state, region):
-        self.num = num
+    def __init__(key, num, name, party, state, region):
+        self.key = key
         self.name = name
         self.party = party
         self.state = state
@@ -11,9 +11,9 @@ class Node():
         self.nvotes = set()
     
     def add_vote(self, num, decision):
-        if(decision == 1):
+        if decision == 1:
             self.yvotes.add(num)
-        elif(decision == 0):
+        elif decision == 0:
             self.nvotes.add(num)
     
     def calcluate_tie_strength(self, node):
@@ -51,21 +51,44 @@ class Graph():
     
 class HouseCSVParser():
     
-    def extract_name(self, row):
-        pass
+    def extract_name(self, col):
+        name_chars = []
+        for c in col:
+            if c == ' ':
+                break
+            name_chars.append(c)
+        return ''.join(name_chars)
     
-    def extract_party(self, row):
-        pass
+    def extract_party(self, col):
+        for i, c in enumerate(col):
+            if c == '(':
+                return col[i+1]
 
-    def extract_state(self, row):
-        pass
+
+    def extract_state(self, col):
+        for i, c in enumerate(col):
+            if c == '(':
+                return col[i+3] + col[i+4]
 
 
 df = pd.read_csv('housedataset.csv')
 
+count = 0
+h = HouseCSVParser()
 
 for row in df.itertuples():
     print(row)
+    count+=1
+    col = row[1]
+    name = h.extract_name(col)
+    print(name)
+    party = h.extract_party(col)
+    print(party)
+    state = h.extract_state(col)
+    print(state)
+    if count > 5:
+        break
+    
 
 
 
