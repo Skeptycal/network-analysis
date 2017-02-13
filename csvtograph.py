@@ -30,6 +30,12 @@ class Node():
 class Edge():
     def __init__(self, weight):
         self.weight = weight
+    
+    def __str__(self):
+        return str(self.weight)
+    
+    def __repr__(self):
+        return str(self.weight)
 
 class Graph():
     def __init__(self, df):
@@ -65,7 +71,10 @@ class Graph():
             for j in self.node_dict:
                 a = self.node_dict[i]
                 b = self.node_dict[j]
-                self.matrix[a.key][b.key] = Edge(a.calculate_tie_strength(b))
+                # Calculate edge weight between nodes a and b
+                tie_strength = a.calculate_tie_strength(b)
+                # Insert edge into graph
+                self.matrix[a.key][b.key] = Edge(tie_strength)
         
     def print_nodes(self):
         pass
