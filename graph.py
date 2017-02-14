@@ -30,8 +30,12 @@ class Node():
 
 class Edge():
 
-    def __init__(self, weight):
+    # Weight calculated via node, party = True if 2 nodes are in same party,
+    #  state = True if 2 nodes are same state
+    def __init__(self, weight, party, state):
         self.weight = weight
+        self.party = party
+        self.state = state
 
     def __str__(self):
         return str(self.weight)
@@ -46,6 +50,8 @@ class Graph():
         # place nodes in dictionary data structure
         self.node_dict = self.generate_dictionary(df)
         self.construct_graph()
+        print(self.matrix[0][0].party)
+        print(self.matrix[0][3].party)
 
     # Read dataframe into node objects
     def generate_dictionary(self, df):
@@ -78,5 +84,8 @@ class Graph():
                 node_b = self.node_dict[j]
                 # Calculate edge weight between nodes a and b
                 tie_strength = node_a.calculate_tie_strength(node_b)
+                party = node_a.party == node_b.party
+                state = node_a.state == node_b.state
                 # Insert edge into graph
-                self.matrix[node_a.key][node_b.key] = Edge(tie_strength)
+                self.matrix[node_a.key][node_b.key] = Edge(tie_strength, party, state)
+                
