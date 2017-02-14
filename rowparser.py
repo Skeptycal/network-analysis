@@ -1,5 +1,7 @@
 import numpy as np
-class HouseCSVParser():
+
+# Helper methods for parsing a row from House (or Senate) Roll Call data set.
+class RowParser():
     
     # Return Surname of representative as string
     def extract_name(self, col):
@@ -26,5 +28,3 @@ class HouseCSVParser():
     def get_votes(self, row, value):
         votes = { i - 1 for i, v in enumerate(row) if i > 1 and not np.isnan(v) and int(v) == value}
         return votes
-        
-        
