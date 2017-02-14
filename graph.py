@@ -10,6 +10,9 @@ class Node():
         # self.region = region may investigate later
         self.yes_votes = yes_votes
         self.no_votes = no_votes
+    
+    def __repr__(self):
+        return self.name + ", " + self.party + ", " + self.state
 
     def calculate_tie_strength(self, node):
         tie_strength = 0
@@ -37,11 +40,8 @@ class Edge():
         self.party = party
         self.state = state
 
-    def __str__(self):
-        return str(self.weight)
-
     def __repr__(self):
-        return str(self.weight)
+        return str(self.weight) + ", " +  str(self.party) + ", " + str(self.state)
 
 
 class Graph():
@@ -50,8 +50,6 @@ class Graph():
         # place nodes in dictionary data structure
         self.node_dict = self.generate_dictionary(df)
         self.construct_graph()
-        print(self.matrix[0][0].party)
-        print(self.matrix[0][3].party)
 
     # Read dataframe into node objects
     def generate_dictionary(self, df):
