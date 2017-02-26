@@ -1,4 +1,5 @@
 from rowparser import RowParser
+import math
 
 class Node():
 
@@ -44,10 +45,15 @@ class Edge():
         return str(self.weight) + ", " +  str(self.party) + ", " + str(self.state)
 
 
+# Graph constructor is called with a data frame object, to get node information.
+# To recreate the data structure with different edge parameters, call construct_graph. 
+# By default, a graph including all edges is created upon object construction.
+# Graph is stored as both an adjacency list and adjacency matrix structure.
 class Graph():
 
     def __init__(self, df):
-        # place nodes in dictionary data structure
+        self.matrix = None
+        self.adj_list = None
         self.node_dict = self.generate_dictionary(df)
         self.construct_graph()
 
@@ -70,20 +76,47 @@ class Graph():
 
         return node_dict
 
-    # Construct adjacency matrix graph structure from nodes
-    def construct_graph(self):
-        # initialize empty adjacency matrix
+    # Construct graph data structures (Adjacency Matrix and Adjacency List)
+    # positive: If set to True, only insert positive tie strengths as edges.
+    # min_strength: If provided, only insert edges with at least this tie strength.
+    def construct_graph(self, positive=False, min_strength=0):
+
+        # Initialize empty adjacency matrix.
         self.matrix = [[0 for x in range(len(self.node_dict))] for y in range(len(self.node_dict))]
 
-        # Loop through dict and insert edges into adjacency matrix
+        # Initialize empty adjacency list.
+        self.adj_list = [list() for x in range(len(self.node_dict))]
+
+        # Loop through dict and insert edges into data structures.
         for i in self.node_dict:
             for j in self.node_dict:
                 node_a = self.node_dict[i]
                 node_b = self.node_dict[j]
-                # Calculate edge weight between nodes a and b
-                tie_strength = node_a.calculate_tie_strength(node_b)
-                party = node_a.party == node_b.party
-                state = node_a.state == node_b.state
-                # Insert edge into graph
-                self.matrix[node_a.key][node_b.key] = Edge(tie_strength, party, state)
+
+                # Do not insert a self-loop edge
+                if node_a.key != node_b.key:
+                    # Calculate edge weight between nodes a and b
+                    tie_strength = node_a.calculate_tie_strength(node_b)
+                    party = node_a.party == node_b.party
+                    state = node_a.state == node_b.state
+
+                    # Create Edge
+                    edge = Edge(tie_strength, party, state)
+
+                    # Insert edge into graph if conditions are met:
+                    insert = False
+                    if not positive and math.fabs(edge.weight) >= min_strength:
+                        insert = True
+                    if positive and edge.weight >= min_strength:
+                        insert = True
+                    if insert:
+                        # Insert into matrix[i][j] and matrix [j][i]
+                        self.matrix[node_a.key][node_b.key] = edge
+                        self.matrix[node_b.key][node_a.key] = edge
+
+                        # Append to adjacency list[i]
+                        self.adj_list[node_a.key].append(edge)
+            
+
+
                 
