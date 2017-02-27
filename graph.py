@@ -49,6 +49,7 @@ class Edge():
 # To recreate the data structure with different edge parameters, call construct_graph. 
 # By default, a graph including all edges is created upon object construction.
 # Graph is stored as both an adjacency list and adjacency matrix structure.
+# Note: Adjacency list structure will not contain tie strength and other information.
 class Graph():
 
     def __init__(self, df):
@@ -115,7 +116,7 @@ class Graph():
                         self.matrix[node_b.key][node_a.key] = edge
 
                         # Append to adjacency list[i]
-                        self.adj_list[node_a.key].append(edge)
+                        self.adj_list[node_a.key].append(node_b.key)
             
 
 
