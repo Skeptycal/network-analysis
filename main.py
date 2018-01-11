@@ -1,6 +1,6 @@
 import pandas as pd
 from graph import Graph
-from hw2 import neighborhood_overlap, degree_distribution, clustering_coefficient, neighborhood_overlap_csv, plot_degree_distribution
+from measures import neighborhood_overlap, degree_distribution, clustering_coefficient, neighborhood_overlap_csv, plot_degree_distribution
 
 # CSV to dataframe
 df = pd.read_csv('data/113senate.csv')
